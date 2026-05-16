@@ -1,0 +1,96 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  12
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#includeEtc "caseDicts/mesh/generation/snappyHexMeshDict.cfg"
+
+castellatedMesh on;
+snap            on;
+addLayers       off;
+
+geometry
+{
+    buildings
+    {
+        type triSurfaceMesh;
+        file "obstacle.stl";
+    }
+};
+
+castellatedMeshControls
+{
+    features
+    (
+      { file  "obstacle.eMesh";
+        level 2; }
+    );
+
+    refinementSurfaces
+    {
+        buildings
+        {
+            level (2 2);
+            patchInfo { type wall; }
+        }
+    }
+
+    refinementRegions
+    {
+
+    }
+
+    insidePoint (1 1 0.01);
+}
+
+snapControls
+{
+    explicitFeatureSnap    true;
+    implicitFeatureSnap    false;
+    nSmoothPatch 5;
+    tolerance 1.0;
+    nSolveIter 10;
+    nRelaxIter 5;
+    resolveFeatureAngle 10; 
+
+}
+
+addLayersControls
+{
+    layers
+    {
+        "CAD.*"
+        {
+            nSurfaceLayers 2;
+        }
+    }
+
+    relativeSizes       true;
+    expansionRatio      1.2;
+    finalLayerThickness 0.5;
+    minThickness        1e-3;
+}
+
+meshQualityControls
+{}
+
+writeFlags
+(
+    // scalarLevels
+    // layerSets
+    // layerFields
+);
+
+mergeTolerance 1e-6;
+
+// ************************************************************************* //

@@ -1,0 +1,119 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      sample;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+writeFormat     csv;
+type            sets;
+libs            ("libsampling.so");
+
+
+interpolationScheme cellPointFace;
+setFormat       raw;
+
+fields
+(
+    alpha.water
+    p_rgh
+    U
+    k
+    omega
+);
+sets
+(
+    // ============================================================
+    // 1) 自由面高度 H(x) 抽取：使用 alpha.water = 0.5 的等值面
+    //    注意：OpenFOAM 本身不支持直接抽取等值面，需要 sample + 后处理
+    // ============================================================
+
+    line_y12
+    {
+        type            lineUniform;
+        axis            xyz;
+
+        // y = 0.858 对应 y/(L/2)=12 (靠左)
+        start           (0.0 0.858 0.0);
+        end             (18.0 0.858 0.0);
+        nPoints         200;
+    }
+
+    line_y8
+    {
+        type            lineUniform;
+        axis            xyz;
+
+        // y = 0.572 对应 y/(L/2)=8 (中线)
+        start           (0.0 0.572 0.0);
+        end             (18.0 0.572 0.0);
+        nPoints         200;
+    }
+
+    line_y4
+    {
+        type            lineUniform;
+        axis            xyz;
+
+        // y = 0.286 对应 y/(L/2)=4 (靠右)
+        start           (0.0 0.286 0.0);
+        end             (18.0 0.286 0.0);
+        nPoints         200;
+    }
+
+    // ============================================================
+    // 2) 若你想与实验的 ADV 速度点对齐，附上（例子）
+    // ============================================================
+
+    ADV_left
+    {
+        type            uniform;
+        axis            xyz;
+
+        points
+        (
+            (12.0 0.858 0.02)
+            (12.0 0.858 0.04)
+            (12.0 0.858 0.06)
+        );
+    }
+
+    ADV_mid
+    {
+        type            uniform;
+        axis            xyz;
+
+        points
+        (
+            (12.0 0.572 0.02)
+            (12.0 0.572 0.04)
+            (12.0 0.572 0.06)
+        );
+    }
+
+    ADV_right
+    {
+        type            uniform;
+        axis            xyz;
+
+        points
+        (
+            (12.0 0.286 0.02)
+            (12.0 0.286 0.04)
+            (12.0 0.286 0.06)
+        );
+    }
+);
+
+// ************************************************************************* //

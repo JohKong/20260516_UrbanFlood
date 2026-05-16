@@ -1,0 +1,81 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions
+(
+
+    {
+        name    inletA;           // 集合名称：inlet
+        type    faceSet;         // 类型：面集合
+        action  new;            // 动作：创建新集合
+        source  patchToFace;// 源类型：通过长方体区域选择面
+        sourceInfo
+        {
+            name inlet; // 从哪个面片选取？答：inlet
+            // 长方体范围定义：(xmin ymin zmin) (xmax ymax zmax)
+            box (-0.002 0 0) (0.001 1 0.020);
+        }
+    }
+
+    {
+        name    inletA;
+        type    faceSet;
+        action  subset;
+
+        source  boxToFace;
+        sourceInfo
+        {
+            // !!! 关键：定义包围你想要的“小方块”的立方体区域 !!!
+            // 格式： (minX minY minZ) (maxX maxY maxZ)
+            box (-0.002 0 0) (0.001 1 0.020);
+            // 请务必根据你的实际几何尺寸修改这个box的坐标！
+            // 你可以用 paraFoam 打开 case，查看 inlet 的位置和范围来确定这个box。
+        }
+    }
+
+    {
+        name    outletB;           // 集合名称：inlet
+        type    faceSet;         // 类型：面集合
+        action  new;            // 动作：创建新集合
+        source  patchToFace;// 源类型：通过长方体区域选择面
+        sourceInfo
+        {
+            name outlet; // 从哪个面片选取？答：
+            // 长方体范围定义：(xmin ymin zmin) (xmax ymax zmax)
+            box (17.9 0 -0.01) (18.1 1 0.02);
+        }
+    }
+
+    {
+        name    outletB;           
+        type    faceSet;
+        action  subset;
+
+        source  boxToFace;
+        sourceInfo
+        {
+            // !!! 关键：定义包围你想要的“小方块”的立方体区域 !!!
+            // 格式： (minX minY minZ) (maxX maxY maxZ)
+            box (17.9 0 -0.01) (18.1 1 0.02);
+            // 请务必根据你的实际几何尺寸修改这个box的坐标！
+            // 你可以用 paraFoam 打开 case，查看 inlet 的位置和范围来确定这个box。
+        }
+    }
+
+
+
+);
+
+// ************************************************************************* //
